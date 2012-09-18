@@ -1,0 +1,9 @@
+%form(action="/wiki" method="POST")
+  %fieldset
+    %label(for="name") Page Name
+    %input(type="text" name="name" disabled="disabled" value=name)
+    %input(type="hidden" name="name" value=name)
+    %label(for="text") Page Text
+    %textarea(name="text")= text
+
+  %input(type="submit")
