@@ -36,6 +36,7 @@ class DB
     @dbname = dbname
     @datomic = Datomic::Client.new @url, @alias
     @datomic.create_database(dbname)
+    update_page('index', "Welcome to our example!")
   end
 
   def load_schema
