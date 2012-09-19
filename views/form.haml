@@ -1,9 +1,12 @@
-%form(action="/wiki" method="POST")
-  %fieldset
-    %label(for="name") Page Name
-    %input(type="text" name="name" disabled="disabled" value=name)
-    %input(type="hidden" name="name" value=name)
-    %label(for="text") Page Text
-    %textarea(name="text")= text
+.row#title
+  .eight.columns
+    %h1= "Edit #{name}"
+.row
+  .twelve.columns
+    %form(action="/wiki" method="POST")
+      %input(type="hidden" name="name" value=name)
+      %label(for="text") Page Text
+      %textarea(name="text")= text
+      %input.button(type="submit")
+      %a.button.alert{:href => page_url(name)} Cancel
 
-  %input(type="submit")

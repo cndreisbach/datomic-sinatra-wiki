@@ -1,3 +1,12 @@
-%h1= page[:"page/name"]
+- content_for :buttons do
+  %section
+    %ul.right
+      %li
+        %a{:href => edit_url(name)} Edit this page
 
-%div= page[:"page/text"]
+.row#title
+  .twelve.columns
+    %h1= name
+.row
+  .twelve.columns
+    %div= wikify(text)

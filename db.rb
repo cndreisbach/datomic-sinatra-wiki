@@ -28,6 +28,11 @@ class DB
     }
   ]
 
+  INITIAL_PAGES = {
+    'Home' => 'Welcome to our example wiki! To see the syntax, check out [[Wiki Syntax]].',
+    'Wiki Syntax' => 'You can see the syntax at [https://wincent.com/misc/wikitext_cheatsheet the Wikitext cheatsheet].'
+  }
+
   attr_reader :dbname, :datomic
 
   def initialize(url, dbalias, dbname)
@@ -36,7 +41,10 @@ class DB
     @dbname = dbname
     @datomic = Datomic::Client.new @url, @alias
     @datomic.create_database(dbname)
-    update_page('index', "Welcome to our example!")
+    load_schema
+    INITIAL_PAGES.each do |name, text|
+      update_page(name, text)
+    end
   end
 
   def load_schema
@@ -54,12 +62,17 @@ class DB
   end
 
   def find_page(name)
-    res = datomic.query(dbname,
-                  [:find, ~"?p", :where, [~"?p", :"page/name", name]]).data
-    if res.empty?
+    begin
+      res = datomic.query(dbname,
+                    [:find, ~"?p", :where, [~"?p", :"page/name", name]])
+      data = res.data
+    rescue Exception => ex
+      raise res.inspect
+    end
+    if data.empty?
       nil
     else
-      eid = res.first.first
+      eid = data.first.first
       datomic.entity(dbname, eid).data
     end
   end

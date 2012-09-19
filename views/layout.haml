@@ -1,0 +1,25 @@
+!!! 5
+%html
+  %head
+    %meta(charset="utf-8")
+    %meta(charset="width=device-width")
+    %link(rel="stylesheet" href="/stylesheets/foundation.min.css")
+    %link(rel="stylesheet" href="/stylesheets/app.css")
+    %script(src="/javascripts/modernizr.foundation.js")
+  %body
+    .row
+      %nav.top-bar
+        %ul
+          %li.name
+            %h1
+              %a(href="/wiki") Wiki
+        = yield_content :buttons
+    = yield
+    #footer.row
+      .twelve.columns
+        This wiki is powered by <a href="http://datomic.com">Datomic</a>.
+        %a(href=dburl) See the database in action.
+      
+    %script(src="/javascripts/jquery.js")
+    %script(src="/javascripts/foundation.min.js")
+    %script(src="/javascripts/app.js")
