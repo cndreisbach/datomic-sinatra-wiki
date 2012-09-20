@@ -5,6 +5,16 @@ body {
   margin-bottom: 20px;
 }
 
+.history .text {
+  border-bottom: 1px dashed #666;
+  margin-bottom: 20px;
+}
+
+.history.last .text {
+  border-bottom-width: 0;
+  margin-bottom: 0;
+}
+
 #footer {
   margin-top: 20px;
   border-top: 1px solid black;

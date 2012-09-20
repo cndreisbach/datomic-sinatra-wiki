@@ -1,12 +1,17 @@
+GIT
+  remote: https://github.com/crnixon/datomic-client.git
+  revision: 78704a95dc4988b4bcec585f0e05ea3ff75666ec
+  specs:
+    datomic-client (0.3.0)
+      edn (~> 0.9.4)
+      rest-client (~> 1.6.7)
+
 GEM
   remote: http://rubygems.org/
   specs:
     backports (2.6.4)
     blankslate (2.1.2.4)
     coderay (1.0.7)
-    datomic-client (0.3.0)
-      edn (~> 0.9.1)
-      rest-client (~> 1.6.7)
     edn (0.9.4)
       parslet (~> 1.4.0)
     eventmachine (1.0.0)
@@ -45,7 +50,7 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
-  datomic-client
+  datomic-client!
   edn (~> 0.9.4)
   haml
   pry

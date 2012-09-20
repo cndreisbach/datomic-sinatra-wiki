@@ -6,7 +6,7 @@
     %form(action="/wiki" method="POST")
       %input(type="hidden" name="name" value=name)
       %label(for="text") Page Text
-      %textarea(name="text")= text
+      %textarea(name="text" rows="20")= text
       %input.button(type="submit")
-      %a.button.alert{:href => page_url(name)} Cancel
+      %a.button.alert{:href => 'javascript:history.back(-1)'} Cancel
 

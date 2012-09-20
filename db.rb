@@ -47,6 +47,10 @@ class DB
     end
   end
 
+  def dbalias
+    [@alias, dbname].join("/")
+  end
+
   def load_schema
     datomic.transact(dbname, SCHEMA)
   end
@@ -57,24 +61,43 @@ class DB
 
   def update_page(name, text)
     page = find_page(name)
-    dbid = page.nil? ? DB.id(:"db.part/user") : page[:"db/id"]
+    dbid = page.nil? ? DB.id(:"db.part/user") : page[0]
     page_transact(dbid, name, text)
   end
 
   def find_page(name)
-    begin
-      res = datomic.query(dbname,
-                    [:find, ~"?p", :where, [~"?p", :"page/name", name]])
-      data = res.data
-    rescue Exception => ex
-      raise res.inspect
-    end
+    res = datomic.query(dbname, [
+                          :find, ~"?id", ~"?name", ~"?text",
+                          :in, ~"$db", ~"?name",
+                          :where,
+                          [~"$db", ~"?id", :"page/name", ~"?name"],
+                          [~"$db", ~"?id", :"page/text", ~"?text"]],
+                  :args => [{:"db/alias" => dbalias}, name])
+    data = res.data
     if data.empty?
       nil
     else
-      eid = data.first.first
-      datomic.entity(dbname, eid).data
+      page = data.first
     end
+  end
+
+  def page_history(name)
+    res = datomic.query(dbname, [
+                          :find, ~"?v", ~"?time", ~"?tx",
+                          :in, ~"$cur", ~"$hist", ~"?uniq-attr", ~"?uniq-val", ~"?hist-attr",
+                          :where,
+                          [~"$cur",  ~"?e",  ~"?uniq-attr", ~"?uniq-val"],
+                          [~"$cur",  ~"?tx", ~":db/txInstant", ~"?time"],
+                          [~"$hist", ~"?e",  ~"?hist-attr", ~"?v", ~"?tx", true]],
+                  :args => [
+                          {:"db/alias" => dbalias},
+                          {:"db/alias" => dbalias, :history => true},
+                          :"page/name",
+                          name,
+                          :"page/text"
+                        ])
+
+    res.data.sort { |a, b| b[1] <=> a[1] }
   end
 
   def page_transact(dbid, name, text)

@@ -1,7 +1,9 @@
 require 'bundler/setup'
+
+require 'haml'
 require 'sinatra/base'
-require 'sinatra/reloader'
 require 'sinatra/content_for'
+require 'sinatra/reloader'
 require 'wikitext'
 
 $:.push(File.dirname(__FILE__))
@@ -20,6 +22,14 @@ class Wiki < Sinatra::Base
 
     def underscore(text)
       text.gsub(/\s/, '_')
+    end
+
+    def space(text)
+      text.gsub(/_/, ' ')
+    end
+
+    def history_url(name)
+      "/history/#{underscore(name)}"
     end
 
     def page_url(name)
@@ -61,7 +71,7 @@ class Wiki < Sinatra::Base
     if page.nil?
       haml :form, :locals => {:name => name, :text => ''}
     else
-      haml :page, :locals => {:name => page[:"page/name"], :text => page[:"page/text"]}
+      haml :page, :locals => {:name => page[1], :text => page[2]}
     end
   end
 
@@ -71,22 +81,32 @@ class Wiki < Sinatra::Base
   end
 
   get %r'/wiki/([\w]+)' do |name|
-    name.gsub!(/_/, ' ')
+    name = space(name)
     page = db.find_page(name)
     if page.nil?
       haml :form, :locals => {:name => name, :text => ''}
     else
-      haml :page, :locals => {:name => page[:"page/name"], :text => page[:"page/text"]}
+      haml :page, :locals => {:name => page[1], :text => page[2]}
     end
   end
 
   get %r'/edit/([\w]+)' do |name|
-    name.gsub!(/_/, ' ')
+    name = space(name)
     page = db.find_page(name)
     if page.nil?
       haml :form, :locals => {:name => name, :text => ''}
     else
-      haml :form, :locals => {:name => page[:"page/name"], :text => page[:"page/text"]}
+      haml :form, :locals => {:name => page[1], :text => page[2]}
+    end
+  end
+
+  get %r'/history/([\w]+)' do |name|
+    name = space(name)
+    history = db.page_history(name)
+    if history.empty?
+      redirect page_url(name)
+    else
+      haml :history, :locals => {:name => name, :history => history}
     end
   end
 

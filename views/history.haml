@@ -1,0 +1,21 @@
+- content_for :buttons do
+  %section
+    %ul.right
+      %li
+        %a{:href => page_url(name)} View most current version
+      %li
+        %a{:href => edit_url(name)} Edit this page
+
+.row#title
+  .twelve.columns
+    %h1= "History: #{name}"
+    
+- history.each do |hrow|
+  - text, date = hrow[0], hrow[1]
+  .row.history{:class => hrow == history.last ? 'last' : ''}
+    .three.columns
+      %p
+        %strong
+          %time(datetime=date)= date.to_time.localtime.strftime("%Y %b %d, %R %Z")
+    .nine.columns.text
+      %div= wikify(text)
